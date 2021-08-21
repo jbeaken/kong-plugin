@@ -17,6 +17,15 @@ for _, strategy in helpers.all_strategies() do
       local route1 = bp.routes:insert({
         hosts = { "test1.com" },
       })
+      local consumer = bp.consumers:insert({
+        id = "ae22a6c1-2f9a-4ec1-98d9-d20b0b36fcd2",
+        username = "admin",
+        custom_id = "74994316"
+      })         
+      local credential = bp.keyauth_credentials:insert({
+        key =  "blah",
+        consumer = { id = "ae22a6c1-2f9a-4ec1-98d9-d20b0b36fcd2" }
+      })      
       -- add the plugin to test to the route we created
       bp.plugins:insert {
         name = PLUGIN_NAME,
@@ -50,38 +59,20 @@ for _, strategy in helpers.all_strategies() do
     end)
 
 
-
     describe("request", function()
       it("gets a 'hello-world' header", function()
         local r = client:get("/request", {
           headers = {
             host = "test1.com"
-          }
+          },
+          query = "apikey=blah"
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
         -- now check the request (as echoed by mockbin) to have the header
-        local header_value = assert.request(r).has.header("hello-world")
+        -- local header_value = assert.request(r).has.header("hello-world")
         -- validate the value of that header
-        assert.equal("this is on a request", header_value)
-      end)
-    end)
-
-
-
-    describe("response", function()
-      it("gets a 'bye-world' header", function()
-        local r = client:get("/request", {
-          headers = {
-            host = "test1.com"
-          }
-        })
-        -- validate that the request succeeded, response status 200
-        assert.response(r).has.status(200)
-        -- now check the response to have the header
-        local header_value = assert.response(r).has.header("bye-world")
-        -- validate the value of that header
-        assert.equal("this is on the response", header_value)
+        -- assert.equal("this is on a request", header_value)
       end)
     end)
 
